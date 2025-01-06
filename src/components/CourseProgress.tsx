@@ -1,0 +1,35 @@
+import React from 'react';
+import { Course } from '../types';
+
+interface CourseProgressProps {
+  course: Course;
+}
+
+export const CourseProgress: React.FC<CourseProgressProps> = ({ course }) => {
+  const totalLessons = course.modules.reduce(
+    (acc, module) => acc + module.lessons.length,
+    0
+  );
+  
+  const completedLessons = course.modules.reduce(
+    (acc, module) => acc + module.lessons.filter(l => l.completed).length,
+    0
+  );
+
+  const progress = (completedLessons / totalLessons) * 100;
+
+  return (
+    <div className="mt-4">
+      <div className="flex justify-between text-sm text-gray-600 mb-1">
+        <span>{completedLessons} of {totalLessons} lessons completed</span>
+        <span>{Math.round(progress)}%</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2">
+        <div
+          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </div>
+  );
+};
