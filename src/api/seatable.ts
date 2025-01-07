@@ -5,6 +5,7 @@ const TOKEN = import.meta.env.VITE_SEATABLE_API_TOKEN;
 
 export async function fetchCourses(): Promise<Course[]> {
   try {
+    // Ensure we use the complete base URL
     const response = await fetch(`${BASE_URL}/rows/?table_name=Kurs_Prompting`, {
       headers: {
         'Authorization': `Bearer ${TOKEN}`,
@@ -13,6 +14,11 @@ export async function fetchCourses(): Promise<Course[]> {
     });
 
     if (!response.ok) {
+      console.error('SeaTable API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        url: response.url
+      });
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
