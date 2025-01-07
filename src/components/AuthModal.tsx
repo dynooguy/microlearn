@@ -27,8 +27,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSignIn,
         await onSignIn(email, password);
       }
       onClose();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ein Fehler ist aufgetreten');
+    } catch (err: any) {
+      // Handle specific error messages
+      if (err.message === 'Invalid login credentials') {
+        setError('E-Mail oder Passwort ist falsch');
+      } else if (err.message?.includes('password')) {
+        setError('Das Passwort muss mindestens 6 Zeichen lang sein');
+      } else if (err.message?.includes('email')) {
+        setError('Bitte geben Sie eine gültige E-Mail-Adresse ein');
+      } else {
+        setError('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+      }
     } finally {
       setLoading(false);
     }
@@ -65,10 +74,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSignIn,
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500"
               required
+              minLength={6}
             />
           </div>
           {error && (
-            <div className="text-red-600 text-sm">{error}</div>
+            <div className="p-3 bg-red-50 text-red-700 rounded-md text-sm">
+              {error}
+            </div>
           )}
           <button
             type="submit"
@@ -79,7 +91,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSignIn,
           </button>
         </form>
         <button
-          onClick={() => setIsSignUp(!isSignUp)}
+          onClick={() => {
+            setIsSignUp(!isSignUp);
+            setError(null);
+          }}
           className="mt-4 text-sm text-amber-600 hover:text-amber-500"
         >
           {isSignUp ? 'Bereits registriert? Anmelden' : 'Noch kein Konto? Registrieren'}
