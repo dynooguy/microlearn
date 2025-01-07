@@ -5,7 +5,7 @@ import { Module, Lesson } from '../types';
 
 interface ModuleCardProps {
   module: Module;
-  onComplete: (lessonId: string) => void;
+  onComplete: (lessonId: string, moduleId: string) => void;
   onViewLesson: (lesson: Lesson) => void;
 }
 
@@ -24,6 +24,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({ module, onComplete, onVi
           <LessonCard
             key={lesson.id}
             lesson={lesson}
+            moduleId={module.id}
             onComplete={onComplete}
             onView={onViewLesson}
           />

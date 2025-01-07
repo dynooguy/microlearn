@@ -6,8 +6,8 @@ import { Course, Lesson } from '../types';
 interface CourseViewProps {
   course: Course;
   onBack: () => void;
-  onComplete: (lessonId: string) => void;
-  onViewLesson: (lesson: Lesson) => void;
+  onComplete: (lessonId: string, moduleId: string) => void;
+  onViewLesson: (lesson: Lesson, moduleId: string) => void;
 }
 
 export const CourseView: React.FC<CourseViewProps> = ({
@@ -67,7 +67,7 @@ export const CourseView: React.FC<CourseViewProps> = ({
             key={module.id}
             module={module}
             onComplete={onComplete}
-            onViewLesson={onViewLesson}
+            onViewLesson={(lesson) => onViewLesson(lesson, module.id)}
           />
         ))}
       </div>

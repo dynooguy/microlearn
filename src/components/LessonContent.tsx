@@ -4,10 +4,11 @@ import { Lesson } from '../types';
 
 interface LessonContentProps {
   lesson: Lesson;
-  onComplete: (lessonId: string) => void;
+  moduleId: string;
+  onComplete: (lessonId: string, moduleId: string) => void;
 }
 
-export const LessonContent: React.FC<LessonContentProps> = ({ lesson, onComplete }) => {
+export const LessonContent: React.FC<LessonContentProps> = ({ lesson, moduleId, onComplete }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -23,7 +24,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson, onComplete
     if (selectedAnswer === null) return;
     setShowResult(true);
     if (selectedAnswer === lesson.quiz.correctAnswer) {
-      onComplete(lesson.id);
+      onComplete(lesson.id, moduleId);
     }
   };
 

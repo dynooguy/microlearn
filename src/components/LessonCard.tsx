@@ -4,11 +4,12 @@ import { Lesson } from '../types';
 
 interface LessonCardProps {
   lesson: Lesson;
-  onComplete: (id: string) => void;
+  moduleId: string;
+  onComplete: (lessonId: string, moduleId: string) => void;
   onView: (lesson: Lesson) => void;
 }
 
-export const LessonCard: React.FC<LessonCardProps> = ({ lesson, onComplete, onView }) => {
+export const LessonCard: React.FC<LessonCardProps> = ({ lesson, moduleId, onComplete, onView }) => {
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
       {lesson.image && (
@@ -42,7 +43,7 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, onComplete, onVi
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              onComplete(lesson.id);
+              onComplete(lesson.id, moduleId);
             }}
             className={`px-4 py-2 rounded-md transition-colors ${
               lesson.completed

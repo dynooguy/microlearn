@@ -14,6 +14,7 @@ export default function App() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -50,8 +51,6 @@ export default function App() {
         .eq('user_id', user.id);
 
       if (progress) {
-        const progressMap = new Map(progress.map(p => [p.lesson_id, p.completed]));
-        
         setCourses(prevCourses =>
           prevCourses.map(course => ({
             ...course,
@@ -59,7 +58,7 @@ export default function App() {
               ...module,
               lessons: module.lessons.map(lesson => ({
                 ...lesson,
-                completed: progressMap.get(lesson.id) || lesson.completed
+                completed: progress.some(p => p.lesson_id === `${module.id}-${lesson.id}` && p.completed)
               }))
             }))
           }))
@@ -70,18 +69,20 @@ export default function App() {
     }
   };
 
-  const handleLessonComplete = async (lessonId: string) => {
+  const handleLessonComplete = async (lessonId: string, moduleId: string) => {
     if (!user) {
       setShowAuthModal(true);
       return;
     }
 
     try {
+      const compositeId = `${moduleId}-${lessonId}`;
+      
       await supabase
         .from('user_progress')
         .upsert({
           user_id: user.id,
-          lesson_id: lessonId,
+          lesson_id: compositeId,
           completed: true
         });
 
@@ -91,11 +92,11 @@ export default function App() {
           modules: course.modules.map(module => ({
             ...module,
             lessons: module.lessons.map(lesson =>
-              lesson.id === lessonId
+              module.id === moduleId && lesson.id === lessonId
                 ? { ...lesson, completed: true }
                 : lesson
-            ),
-          })),
+            )
+          }))
         }))
       );
 
@@ -106,16 +107,21 @@ export default function App() {
           modules: prevCourse.modules.map(module => ({
             ...module,
             lessons: module.lessons.map(lesson =>
-              lesson.id === lessonId
+              module.id === moduleId && lesson.id === lessonId
                 ? { ...lesson, completed: true }
                 : lesson
-            ),
-          })),
+            )
+          }))
         };
       });
     } catch (err) {
       console.error('Error saving progress:', err);
     }
+  };
+
+  const handleViewLesson = (lesson: Lesson, moduleId: string) => {
+    setSelectedLesson(lesson);
+    setSelectedModuleId(moduleId);
   };
 
   if (loading) {
@@ -143,27 +149,22 @@ export default function App() {
               <GraduationCap className="w-8 h-8 text-amber-600" />
               <h1 className="text-2xl font-bold text-gray-800">MicroLearn</h1>
             </div>
-            <div className="flex items-center gap-4">
-              {user && (
-                <span className="text-gray-600">{user.email}</span>
+            <button
+              onClick={user ? signOut : () => setShowAuthModal(true)}
+              className="flex items-center space-x-2 px-4 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+            >
+              {user ? (
+                <>
+                  <LogOut className="w-4 h-4" />
+                  <span>Abmelden</span>
+                </>
+              ) : (
+                <>
+                  <LogIn className="w-4 h-4" />
+                  <span>Anmelden</span>
+                </>
               )}
-              <button
-                onClick={user ? signOut : () => setShowAuthModal(true)}
-                className="flex items-center space-x-2 px-4 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
-              >
-                {user ? (
-                  <>
-                    <LogOut className="w-4 h-4" />
-                    <span>Abmelden</span>
-                  </>
-                ) : (
-                  <>
-                    <LogIn className="w-4 h-4" />
-                    <span>Anmelden</span>
-                  </>
-                )}
-              </button>
-            </div>
+            </button>
           </div>
         </div>
       </header>
@@ -174,7 +175,7 @@ export default function App() {
             course={selectedCourse}
             onBack={() => setSelectedCourse(null)}
             onComplete={handleLessonComplete}
-            onViewLesson={setSelectedLesson}
+            onViewLesson={(lesson, moduleId) => handleViewLesson(lesson, moduleId)}
           />
         ) : (
           <>
@@ -189,11 +190,15 @@ export default function App() {
 
       <Modal
         isOpen={selectedLesson !== null}
-        onClose={() => setSelectedLesson(null)}
+        onClose={() => {
+          setSelectedLesson(null);
+          setSelectedModuleId(null);
+        }}
       >
-        {selectedLesson && (
+        {selectedLesson && selectedModuleId && (
           <LessonContent
             lesson={selectedLesson}
+            moduleId={selectedModuleId}
             onComplete={handleLessonComplete}
           />
         )}
