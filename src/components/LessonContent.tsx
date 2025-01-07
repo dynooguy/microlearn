@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Clock, BookOpen, CheckCircle, XCircle, RotateCcw } from 'lucide-react';
 import { Lesson } from '../types';
 
@@ -11,6 +11,13 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson, onComplete
   const [isFlipped, setIsFlipped] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isFlipped && contentRef.current) {
+      contentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [isFlipped]);
 
   const handleSubmit = () => {
     if (selectedAnswer === null) return;
@@ -30,21 +37,21 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson, onComplete
       <div className={`relative transition-transform duration-700 transform-style-preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
         {/* Front side - Lesson Content */}
         <div className={`absolute w-full backface-hidden ${isFlipped ? 'invisible' : ''}`}>
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-t-lg p-6">
+          <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-t-lg p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-gray-800">{lesson.title}</h2>
-              <div className="flex items-center text-blue-600">
+              <div className="flex items-center text-amber-600">
                 <Clock className="w-5 h-5 mr-1" />
-                <span>{lesson.duration} min</span>
+                <span>{lesson.duration} Min.</span>
               </div>
             </div>
             <div className="flex items-center text-sm text-gray-600">
               <BookOpen className="w-4 h-4 mr-1" />
-              <span>Reading material</span>
+              <span>Lernmaterial</span>
             </div>
           </div>
 
-          <div className="p-6">
+          <div className="p-6" ref={contentRef}>
             <div className="prose max-w-none mb-8">
               {lesson.content.split('\n').map((line, index) => {
                 if (line.startsWith('# ')) {
@@ -65,18 +72,18 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson, onComplete
 
             <button
               onClick={() => setIsFlipped(true)}
-              className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+              className="w-full py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors flex items-center justify-center space-x-2"
             >
-              <span>Take the Quiz</span>
+              <span>Quiz starten</span>
             </button>
           </div>
         </div>
 
         {/* Back side - Quiz */}
         <div className={`absolute w-full backface-hidden rotate-y-180 ${!isFlipped ? 'invisible' : ''}`}>
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-t-lg p-6">
+          <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-t-lg p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-gray-800">Knowledge Check</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Wissensüberprüfung</h2>
               <button
                 onClick={() => !showResult && setIsFlipped(false)}
                 className="text-gray-600 hover:text-gray-800"
@@ -94,8 +101,8 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson, onComplete
                   key={index}
                   className={`block p-4 rounded-lg border-2 cursor-pointer transition-all ${
                     selectedAnswer === index
-                      ? 'border-purple-600 bg-purple-50'
-                      : 'border-gray-200 hover:border-purple-200'
+                      ? 'border-amber-600 bg-amber-50'
+                      : 'border-gray-200 hover:border-amber-200'
                   } ${
                     showResult && index === lesson.quiz.correctAnswer
                       ? 'border-green-600 bg-green-50'
@@ -111,7 +118,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson, onComplete
                       value={index}
                       checked={selectedAnswer === index}
                       onChange={() => !showResult && setSelectedAnswer(index)}
-                      className="h-4 w-4 text-purple-600"
+                      className="h-4 w-4 text-amber-600"
                       disabled={showResult}
                     />
                     <span>{option}</span>
@@ -130,21 +137,21 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson, onComplete
               <button
                 onClick={handleSubmit}
                 disabled={selectedAnswer === null}
-                className="mt-6 w-full py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+                className="mt-6 w-full py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50"
               >
-                Submit Answer
+                Antwort einreichen
               </button>
             ) : (
               <div className="mt-6 space-y-4">
                 {selectedAnswer === lesson.quiz.correctAnswer ? (
                   <div className="p-4 bg-green-50 text-green-800 rounded-lg flex items-center">
                     <CheckCircle className="w-5 h-5 mr-2" />
-                    Correct! Lesson marked as complete.
+                    Richtig! Lektion als abgeschlossen markiert.
                   </div>
                 ) : (
                   <div className="p-4 bg-red-50 text-red-800 rounded-lg flex items-center">
                     <XCircle className="w-5 h-5 mr-2" />
-                    Incorrect. Try again!
+                    Falsch. Versuche es noch einmal!
                   </div>
                 )}
                 {selectedAnswer !== lesson.quiz.correctAnswer && (
@@ -152,7 +159,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson, onComplete
                     onClick={resetQuiz}
                     className="w-full py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
                   >
-                    Try Again
+                    Erneut versuchen
                   </button>
                 )}
               </div>

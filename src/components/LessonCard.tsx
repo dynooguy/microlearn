@@ -23,7 +23,7 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, onComplete, onVi
           <h3 className="text-lg font-semibold text-gray-800">{lesson.title}</h3>
           <div className="flex items-center text-gray-600">
             <Clock className="w-4 h-4 mr-1" />
-            <span className="text-sm">{lesson.duration} min</span>
+            <span className="text-sm">{lesson.duration} Min.</span>
           </div>
         </div>
         <p className="text-gray-600 mb-4">{lesson.description}</p>
@@ -36,7 +36,7 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, onComplete, onVi
             }}
             className="px-4 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
           >
-            View Lesson
+            Lektion ansehen
           </button>
           <button
             onClick={(e) => {
@@ -47,10 +47,10 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, onComplete, onVi
             className={`px-4 py-2 rounded-md transition-colors ${
               lesson.completed
                 ? 'bg-green-100 text-green-700'
-                : 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-amber-600 text-white hover:bg-amber-700'
             }`}
           >
-            {lesson.completed ? 'Completed' : 'Mark Complete'}
+            {lesson.completed ? 'Abgeschlossen' : 'Als erledigt markieren'}
           </button>
         </div>
       </div>

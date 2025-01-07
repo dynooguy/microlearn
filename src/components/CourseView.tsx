@@ -30,20 +30,31 @@ export const CourseView: React.FC<CourseViewProps> = ({
         className="flex items-center text-gray-600 hover:text-gray-800 mb-6"
       >
         <ArrowLeft className="w-5 h-5 mr-2" />
-        Back to Courses
+        Zurück zur Kursübersicht
       </button>
 
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4">{course.title}</h2>
-        <p className="text-gray-600 mb-4">{course.description}</p>
+        <div className="relative h-64 rounded-xl overflow-hidden mb-6">
+          <img
+            src={course.image}
+            alt={course.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+            <h2 className="text-3xl font-bold mb-2">{course.title}</h2>
+            <p className="text-white/90">{course.description}</p>
+          </div>
+        </div>
+
         <div className="bg-white rounded-lg p-4 shadow-sm">
           <div className="flex justify-between text-sm mb-2">
-            <span>Course Progress</span>
+            <span>Kursfortschritt</span>
             <span>{Math.round(progress)}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="bg-amber-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             />
           </div>

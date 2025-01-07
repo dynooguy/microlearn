@@ -24,7 +24,7 @@ export default function App() {
       const fetchedCourses = await fetchCourses();
       setCourses(fetchedCourses);
     } catch (err) {
-      setError('Failed to load courses. Please try again later.');
+      setError('Fehler beim Laden der Kurse. Bitte versuchen Sie es später erneut.');
       console.error('Error loading courses:', err);
     } finally {
       setLoading(false);
@@ -64,32 +64,32 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-xl text-gray-600">Loading courses...</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-xl text-gray-600">Kurse werden geladen...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-xl text-red-600">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center space-x-3">
-            <GraduationCap className="w-8 h-8 text-blue-600" />
+            <GraduationCap className="w-8 h-8 text-amber-600" />
             <h1 className="text-2xl font-bold text-gray-800">MicroLearn</h1>
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-8">
         {selectedCourse ? (
           <CourseView
             course={selectedCourse}
@@ -99,7 +99,7 @@ export default function App() {
           />
         ) : (
           <>
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Available Courses</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Verfügbare Kurse</h2>
             <CourseList
               courses={courses}
               onSelectCourse={setSelectedCourse}
