@@ -28,7 +28,7 @@ export default function App() {
     if (user) {
       loadUserProgress();
     }
-  }, [user, courses]);
+  }, [user]);
 
   const loadCourses = async () => {
     try {
@@ -44,11 +44,15 @@ export default function App() {
   };
 
   const loadUserProgress = async () => {
+    if (!user) return;
+
     try {
-      const { data: progress } = await supabase
+      const { data: progress, error: progressError } = await supabase
         .from('user_progress')
-        .select('lesson_id, completed')
+        .select('*')
         .eq('user_id', user.id);
+
+      if (progressError) throw progressError;
 
       if (progress) {
         setCourses(prevCourses =>
@@ -58,7 +62,7 @@ export default function App() {
               ...module,
               lessons: module.lessons.map(lesson => ({
                 ...lesson,
-                completed: progress.some(p => p.lesson_id === `${module.id}-${lesson.id}` && p.completed)
+                completed: progress.some(p => p.lesson_id === lesson.id && p.module_id === module.id && p.completed)
               }))
             }))
           }))
@@ -76,15 +80,16 @@ export default function App() {
     }
 
     try {
-      const compositeId = `${moduleId}-${lessonId}`;
-      
-      await supabase
+      const { error: upsertError } = await supabase
         .from('user_progress')
         .upsert({
           user_id: user.id,
-          lesson_id: compositeId,
+          lesson_id: lessonId,
+          module_id: moduleId,
           completed: true
         });
+
+      if (upsertError) throw upsertError;
 
       setCourses(prevCourses =>
         prevCourses.map(course => ({
