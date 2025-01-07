@@ -11,6 +11,7 @@ export interface Lesson {
   duration: number;
   completed: boolean;
   content: string;
+  image?: string;
   quiz: QuizQuestion;
 }
 
@@ -27,7 +28,5 @@ export interface Course {
   description: string;
   image: string;
   modules: Module[];
-  totalLessons?: number;
-  totalDuration?: number;
   level: 'starter' | 'advanced' | 'professional';
 }

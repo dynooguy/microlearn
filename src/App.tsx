@@ -1,16 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GraduationCap } from 'lucide-react';
 import { CourseList } from './components/CourseList';
 import { CourseView } from './components/CourseView';
 import { Modal } from './components/Modal';
 import { LessonContent } from './components/LessonContent';
-import { courses as initialCourses } from './data/courses';
 import { Course, Lesson } from './types';
+import { fetchCourses } from './api/seatable';
 
-function App() {
-  const [courses, setCourses] = useState<Course[]>(initialCourses);
+export default function App() {
+  const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadCourses();
+  }, []);
+
+  const loadCourses = async () => {
+    try {
+      setLoading(true);
+      const fetchedCourses = await fetchCourses();
+      setCourses(fetchedCourses);
+    } catch (err) {
+      setError('Failed to load courses. Please try again later.');
+      console.error('Error loading courses:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLessonComplete = (lessonId: string) => {
     setCourses(prevCourses =>
@@ -42,6 +61,22 @@ function App() {
       };
     });
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-xl text-gray-600">Loading courses...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-xl text-red-600">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -87,5 +122,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
