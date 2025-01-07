@@ -143,22 +143,27 @@ export default function App() {
               <GraduationCap className="w-8 h-8 text-amber-600" />
               <h1 className="text-2xl font-bold text-gray-800">MicroLearn</h1>
             </div>
-            <button
-              onClick={user ? signOut : () => setShowAuthModal(true)}
-              className="flex items-center space-x-2 px-4 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
-            >
-              {user ? (
-                <>
-                  <LogOut className="w-4 h-4" />
-                  <span>Abmelden</span>
-                </>
-              ) : (
-                <>
-                  <LogIn className="w-4 h-4" />
-                  <span>Anmelden</span>
-                </>
+            <div className="flex items-center gap-4">
+              {user && (
+                <span className="text-gray-600">{user.email}</span>
               )}
-            </button>
+              <button
+                onClick={user ? signOut : () => setShowAuthModal(true)}
+                className="flex items-center space-x-2 px-4 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+              >
+                {user ? (
+                  <>
+                    <LogOut className="w-4 h-4" />
+                    <span>Abmelden</span>
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="w-4 h-4" />
+                    <span>Anmelden</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </header>
