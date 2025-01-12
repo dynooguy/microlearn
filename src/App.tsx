@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { GraduationCap, LogOut, LogIn } from 'lucide-react';
+import { GraduationCap, LogOut, LogIn, UserCircle } from 'lucide-react';
 import { CourseList } from './components/CourseList';
 import { CourseView } from './components/CourseView';
 import { Modal } from './components/Modal';
 import { LessonContent } from './components/LessonContent';
 import { AuthModal } from './components/AuthModal';
+import { UserProfile } from './components/UserProfile';
 import { Course, Lesson } from './types';
-import { fetchCourses } from './api/seatable';
+import { courses as staticCourses } from './data/courses';
 import { useAuth } from './hooks/useAuth';
 import { supabase } from './lib/supabase';
 
@@ -14,10 +15,10 @@ export default function App() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
-  const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const { user, signIn, signUp, signOut } = useAuth();
 
   useEffect(() => {
@@ -28,13 +29,12 @@ export default function App() {
     if (user) {
       loadUserProgress();
     }
-  }, [user]);
+  }, [user, courses]);
 
   const loadCourses = async () => {
     try {
       setLoading(true);
-      const fetchedCourses = await fetchCourses();
-      setCourses(fetchedCourses);
+      setCourses(staticCourses);
     } catch (err) {
       setError('Fehler beim Laden der Kurse. Bitte versuchen Sie es später erneut.');
       console.error('Error loading courses:', err);
@@ -47,12 +47,10 @@ export default function App() {
     if (!user) return;
 
     try {
-      const { data: progress, error: progressError } = await supabase
+      const { data: progress } = await supabase
         .from('user_progress')
-        .select('*')
+        .select('lesson_id, module_id, completed, completion_date')
         .eq('user_id', user.id);
-
-      if (progressError) throw progressError;
 
       if (progress) {
         setCourses(prevCourses =>
@@ -60,10 +58,15 @@ export default function App() {
             ...course,
             modules: course.modules.map(module => ({
               ...module,
-              lessons: module.lessons.map(lesson => ({
-                ...lesson,
-                completed: progress.some(p => p.lesson_id === lesson.id && p.module_id === module.id && p.completed)
-              }))
+              lessons: module.lessons.map(lesson => {
+                const lessonProgress = progress.find(
+                  p => p.lesson_id === lesson.id && p.module_id === module.id
+                );
+                return {
+                  ...lesson,
+                  completed: lessonProgress?.completed || false
+                };
+              })
             }))
           }))
         );
@@ -80,16 +83,15 @@ export default function App() {
     }
 
     try {
-      const { error: upsertError } = await supabase
+      await supabase
         .from('user_progress')
         .upsert({
           user_id: user.id,
           lesson_id: lessonId,
           module_id: moduleId,
-          completed: true
+          completed: true,
+          completion_date: new Date().toISOString()
         });
-
-      if (upsertError) throw upsertError;
 
       setCourses(prevCourses =>
         prevCourses.map(course => ({
@@ -97,36 +99,16 @@ export default function App() {
           modules: course.modules.map(module => ({
             ...module,
             lessons: module.lessons.map(lesson =>
-              module.id === moduleId && lesson.id === lessonId
+              lesson.id === lessonId && module.id === moduleId
                 ? { ...lesson, completed: true }
                 : lesson
             )
           }))
         }))
       );
-
-      setSelectedCourse(prevCourse => {
-        if (!prevCourse) return null;
-        return {
-          ...prevCourse,
-          modules: prevCourse.modules.map(module => ({
-            ...module,
-            lessons: module.lessons.map(lesson =>
-              module.id === moduleId && lesson.id === lessonId
-                ? { ...lesson, completed: true }
-                : lesson
-            )
-          }))
-        };
-      });
     } catch (err) {
       console.error('Error saving progress:', err);
     }
-  };
-
-  const handleViewLesson = (lesson: Lesson, moduleId: string) => {
-    setSelectedLesson(lesson);
-    setSelectedModuleId(moduleId);
   };
 
   if (loading) {
@@ -154,33 +136,51 @@ export default function App() {
               <GraduationCap className="w-8 h-8 text-amber-600" />
               <h1 className="text-2xl font-bold text-gray-800">MicroLearn</h1>
             </div>
-            <button
-              onClick={user ? signOut : () => setShowAuthModal(true)}
-              className="flex items-center space-x-2 px-4 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
-            >
-              {user ? (
-                <>
-                  <LogOut className="w-4 h-4" />
-                  <span>Abmelden</span>
-                </>
-              ) : (
-                <>
-                  <LogIn className="w-4 h-4" />
-                  <span>Anmelden</span>
-                </>
+            <div className="flex items-center space-x-4">
+              {user && (
+                <button
+                  onClick={() => setShowProfile(true)}
+                  className="flex items-center space-x-2 px-4 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                >
+                  <UserCircle className="w-4 h-4" />
+                  <span>Profil</span>
+                </button>
               )}
-            </button>
+              <button
+                onClick={user ? signOut : () => setShowAuthModal(true)}
+                className="flex items-center space-x-2 px-4 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+              >
+                {user ? (
+                  <>
+                    <LogOut className="w-4 h-4" />
+                    <span>Abmelden</span>
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="w-4 h-4" />
+                    <span>Anmelden</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {selectedCourse ? (
+        {showProfile && user ? (
+          <UserProfile
+            email={user.email || ''}
+            onSignOut={signOut}
+            onClose={() => setShowProfile(false)}
+            courses={courses}
+          />
+        ) : selectedCourse ? (
           <CourseView
             course={selectedCourse}
             onBack={() => setSelectedCourse(null)}
             onComplete={handleLessonComplete}
-            onViewLesson={(lesson, moduleId) => handleViewLesson(lesson, moduleId)}
+            onViewLesson={setSelectedLesson}
           />
         ) : (
           <>
@@ -195,15 +195,14 @@ export default function App() {
 
       <Modal
         isOpen={selectedLesson !== null}
-        onClose={() => {
-          setSelectedLesson(null);
-          setSelectedModuleId(null);
-        }}
+        onClose={() => setSelectedLesson(null)}
       >
-        {selectedLesson && selectedModuleId && (
+        {selectedLesson && (
           <LessonContent
             lesson={selectedLesson}
-            moduleId={selectedModuleId}
+            moduleId={selectedCourse?.modules.find(m => 
+              m.lessons.some(l => l.id === selectedLesson.id)
+            )?.id || ''}
             onComplete={handleLessonComplete}
           />
         )}
