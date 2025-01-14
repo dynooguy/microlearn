@@ -29,4 +29,5 @@ export interface Course {
   image: string;
   modules: Module[];
   level: 'starter' | 'advanced' | 'professional';
+  access: 'free' | 'paid';
 }

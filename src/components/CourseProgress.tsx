@@ -16,7 +16,7 @@ export const CourseProgress: React.FC<CourseProgressProps> = ({ course }) => {
     0
   );
 
-  const progress = (completedLessons / totalLessons) * 100;
+  const progress = totalLessons === 0 ? 0 : (completedLessons / totalLessons) * 100;
 
   return (
     <div className="mt-4">
@@ -26,8 +26,8 @@ export const CourseProgress: React.FC<CourseProgressProps> = ({ course }) => {
       </div>
       <div className="w-full bg-gray-200 rounded-full h-2">
         <div
-          className="bg-amber-600 h-2 rounded-full transition-all duration-300"
-          style={{ width: `${progress}%` }}
+          className="h-2 rounded-full transition-all duration-300"
+          style={{ width: `${progress}%`, backgroundColor: '#666666' }}
         />
       </div>
     </div>

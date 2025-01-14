@@ -7,7 +7,7 @@ interface CourseViewProps {
   course: Course;
   onBack: () => void;
   onComplete: (lessonId: string, moduleId: string) => void;
-  onViewLesson: (lesson: Lesson, moduleId: string) => void;
+  onViewLesson: (lesson: Lesson) => void;
 }
 
 export const CourseView: React.FC<CourseViewProps> = ({
@@ -16,12 +16,15 @@ export const CourseView: React.FC<CourseViewProps> = ({
   onComplete,
   onViewLesson,
 }) => {
-  const totalLessons = course.modules.reduce((acc, module) => acc + module.lessons.length, 0);
+  const totalLessons = course.modules.reduce(
+    (acc, module) => acc + module.lessons.length,
+    0
+  );
   const completedLessons = course.modules.reduce(
     (acc, module) => acc + module.lessons.filter(l => l.completed).length,
     0
   );
-  const progress = (completedLessons / totalLessons) * 100;
+  const progress = totalLessons === 0 ? 0 : (completedLessons / totalLessons) * 100;
 
   return (
     <div>
@@ -47,17 +50,22 @@ export const CourseView: React.FC<CourseViewProps> = ({
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-4 shadow-sm">
-          <div className="flex justify-between text-sm mb-2">
-            <span>Kursfortschritt</span>
-            <span>{Math.round(progress)}%</span>
+        <div className="bg-white rounded-lg p-6 shadow-md">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-lg font-semibold text-gray-800">Kursfortschritt</h3>
+            <span className="text-lg font-bold text-gray-600">{Math.round(progress)}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-gray-100 rounded-full h-4">
             <div
-              className="bg-amber-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
+              className="h-4 rounded-full transition-all duration-300 relative"
+              style={{ width: `${progress}%`, backgroundColor: '#666666' }}
+            >
+              <div className="absolute inset-0 rounded-full animate-pulse" style={{ backgroundColor: 'rgba(102, 102, 102, 0.3)' }}></div>
+            </div>
           </div>
+          <p className="text-sm text-gray-600 mt-2">
+            {completedLessons} von {totalLessons} Lektionen abgeschlossen
+          </p>
         </div>
       </div>
 
@@ -67,7 +75,7 @@ export const CourseView: React.FC<CourseViewProps> = ({
             key={module.id}
             module={module}
             onComplete={onComplete}
-            onViewLesson={(lesson) => onViewLesson(lesson, module.id)}
+            onViewLesson={(lesson) => onViewLesson(lesson)}
           />
         ))}
       </div>

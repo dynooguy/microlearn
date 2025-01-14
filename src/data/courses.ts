@@ -2,235 +2,204 @@ import { Course } from '../types';
 
 export const courses: Course[] = [
   {
-    id: 'learning-fundamentals',
-    title: 'Learning Fundamentals',
-    description: 'Master the art of learning with proven techniques and strategies',
-    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800',
+    id: 'chatgpt-prompting',
+    title: 'ChatGPT Prompting Strategien',
+    description: 'Lernen Sie effektive Techniken für die Kommunikation mit ChatGPT und erstellen Sie bessere Prompts für optimale Ergebnisse.',
+    image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800',
     level: 'starter',
+    access: 'free',
     modules: [
       {
-        id: '1',
-        title: 'Getting Started',
-        description: 'Learn the fundamentals and core concepts',
+        id: 'basics',
+        title: 'Grundlagen des Promptings',
+        description: 'Verstehen Sie die Grundprinzipien effektiver Prompts',
         lessons: [
           {
-            id: '1-1',
-            title: 'Introduction',
-            description: 'Brief overview of the course',
-            duration: 5,
-            completed: false,
-            content: `
-# Welcome to Learning Fundamentals!
-
-In this introductory lesson, we'll cover:
-- How the platform works
-- Best practices for micro-learning
-- Setting up your learning goals
-
-## Key Benefits of Micro-Learning
-1. Better retention through bite-sized content
-2. Flexible learning at your own pace
-3. Immediate application of concepts
-
-Remember: Small steps lead to big achievements!
-            `,
-            quiz: {
-              question: "What is the main benefit of micro-learning?",
-              options: [
-                "It takes less time to complete courses",
-                "Better retention of information",
-                "It's cheaper than traditional learning",
-                "It requires less effort"
-              ],
-              correctAnswer: 1
-            }
-          },
-          {
-            id: '1-2',
-            title: 'Core Concepts',
-            description: 'Understanding the basics',
+            id: 'intro',
+            title: 'Einführung in Prompting',
+            description: 'Lernen Sie die Basics der Kommunikation mit ChatGPT',
             duration: 10,
             completed: false,
             content: `
-# Core Concepts Overview
+# Einführung in Prompting
 
-## Foundation Principles
-- Start with fundamentals
-- Practice regularly
-- Build on existing knowledge
+## Was ist Prompting?
+- Die Kunst der effektiven Kommunikation mit KI
+- Grundlegende Prinzipien der Prompt-Erstellung
+- Bedeutung präziser Anweisungen
 
-## Learning Strategies
-1. Active recall
-2. Spaced repetition
-3. Practical application
+## Warum ist gutes Prompting wichtig?
+1. Bessere Antwortqualität
+2. Zeitersparnis durch präzise Anfragen
+3. Vermeidung von Missverständnissen
 
-Take your time to understand each concept before moving forward.
+Prompting ist der Schlüssel zur erfolgreichen Nutzung von ChatGPT!
             `,
             quiz: {
-              question: "Which learning strategy involves testing yourself on material you've learned?",
+              question: "Was ist der Hauptvorteil von gutem Prompting?",
               options: [
-                "Spaced repetition",
-                "Active recall",
-                "Practical application",
-                "Knowledge building"
+                "Schnellere Antworten von ChatGPT",
+                "Bessere Qualität der Antworten",
+                "Weniger Serverauslastung",
+                "Günstigere API-Kosten"
               ],
               correctAnswer: 1
             }
           },
-        ],
-      },
-      {
-        id: '2',
-        title: 'Advanced Topics',
-        description: 'Dive deeper into advanced concepts',
-        lessons: [
           {
-            id: '2-1',
-            title: 'Advanced Techniques',
-            description: 'Master advanced strategies',
+            id: 'structure',
+            title: 'Struktur eines guten Prompts',
+            description: 'Die wichtigsten Elemente erfolgreicher Prompts',
             duration: 15,
             completed: false,
             content: `
-# Advanced Learning Techniques
+# Struktur eines guten Prompts
 
-## Deep Dive Topics
-1. Metacognition
-2. Learning Transfer
-3. Pattern Recognition
+## Kernelemente
+- Klarer Kontext
+- Spezifische Anweisungen
+- Gewünschtes Format
 
-## Implementation Steps
-- Identify knowledge gaps
-- Create learning roadmaps
-- Track progress systematically
+## Best Practices
+1. Präzise Formulierungen verwenden
+2. Beispiele bereitstellen
+3. Erwartetes Ergebnis definieren
 
-These techniques will help accelerate your learning journey.
+Die richtige Struktur ist entscheidend für erfolgreiche Prompts.
             `,
             quiz: {
-              question: "What is metacognition?",
+              question: "Welches Element gehört NICHT zu einem guten Prompt?",
               options: [
-                "The ability to memorize information quickly",
-                "The process of learning new skills",
-                "Thinking about one's own thinking",
-                "A method of organizing notes"
+                "Klarer Kontext",
+                "Spezifische Anweisungen",
+                "Technische Details zur KI",
+                "Gewünschtes Format"
               ],
               correctAnswer: 2
             }
-          },
+          }
+        ]
+      },
+      {
+        id: 'advanced',
+        title: 'Fortgeschrittene Techniken',
+        description: 'Erweiterte Strategien für bessere Ergebnisse',
+        lessons: [
           {
-            id: '2-2',
-            title: 'Best Practices',
-            description: 'Learn industry best practices',
-            duration: 10,
+            id: 'chain',
+            title: 'Prompt Chaining',
+            description: 'Verketten Sie Prompts für komplexe Aufgaben',
+            duration: 20,
             completed: false,
             content: `
-# Best Practices Guide
+# Prompt Chaining
 
-## Key Principles
-1. Consistency is key
-2. Quality over quantity
-3. Regular review cycles
+## Was ist Prompt Chaining?
+- Verkettung mehrerer Prompts
+- Aufbau komplexer Gespräche
+- Schrittweise Verfeinerung
 
-## Implementation Tips
-- Set clear goals
-- Create a study schedule
-- Monitor your progress
-- Adjust as needed
+## Anwendungsbeispiele
+1. Textanalyse und -überarbeitung
+2. Mehrstufige Problemlösung
+3. Iterative Verbesserung
 
-Follow these practices for optimal results.
+Nutzen Sie Prompt Chaining für anspruchsvolle Aufgaben.
             `,
             quiz: {
-              question: "Which of these is NOT mentioned as a key principle in the lesson?",
+              question: "Wofür ist Prompt Chaining am besten geeignet?",
               options: [
-                "Consistency is key",
-                "Quality over quantity",
-                "Regular review cycles",
-                "Speed over accuracy"
+                "Einfache Ja/Nein-Fragen",
+                "Komplexe, mehrstufige Aufgaben",
+                "Einzelne Definitionen",
+                "Kurze Übersetzungen"
               ],
-              correctAnswer: 3
+              correctAnswer: 1
             }
-          },
-        ],
-      },
-    ],
+          }
+        ]
+      }
+    ]
   },
   {
-    id: 'web-development',
-    title: 'Web Development Essentials',
-    description: 'Learn modern web development from the ground up',
-    image: 'https://images.unsplash.com/photo-1593720213428-28a5b9e94613?auto=format&fit=crop&q=80&w=800',
+    id: 'chatgpt-legal',
+    title: 'Rechtliche Aspekte von ChatGPT',
+    description: 'Verstehen Sie die rechtlichen Rahmenbedingungen und Datenschutzaspekte bei der Nutzung von ChatGPT in Deutschland.',
+    image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800',
     level: 'advanced',
+    access: 'paid',
     modules: [
       {
-        id: 'web-1',
-        title: 'HTML & CSS Basics',
-        description: 'Master the building blocks of the web',
+        id: 'privacy',
+        title: 'Datenschutz und DSGVO',
+        description: 'Datenschutzrechtliche Anforderungen bei der ChatGPT-Nutzung',
         lessons: [
           {
-            id: 'web-1-1',
-            title: 'HTML Fundamentals',
-            description: 'Learn the basics of HTML markup',
-            duration: 10,
+            id: 'basics-privacy',
+            title: 'Grundlagen des Datenschutzes',
+            description: 'DSGVO-Konformität bei der KI-Nutzung',
+            duration: 25,
             completed: false,
             content: `
-# HTML Fundamentals
+# Datenschutz bei ChatGPT
 
-## Core Concepts
-- Document structure
-- Semantic elements
-- Accessibility basics
+## DSGVO-Grundlagen
+- Personenbezogene Daten
+- Verarbeitungsgrundsätze
+- Rechtmäßigkeit der Verarbeitung
 
-## Essential Elements
-1. Headings and paragraphs
-2. Lists and tables
-3. Forms and inputs
+## Praktische Umsetzung
+1. Datensparsamkeit
+2. Zweckbindung
+3. Dokumentationspflichten
 
-Practice writing clean, semantic HTML for better accessibility.
+Datenschutz ist bei der KI-Nutzung unverzichtbar.
             `,
             quiz: {
-              question: "What is the main purpose of semantic HTML elements?",
+              question: "Was ist ein wichtiger Grundsatz der DSGVO?",
               options: [
-                "To make the code look prettier",
-                "To provide meaning and structure to content",
-                "To improve website loading speed",
-                "To add visual styles"
+                "Maximale Datensammlung",
+                "Datensparsamkeit",
+                "Unbegrenzte Speicherung",
+                "Globale Weitergabe"
               ],
               correctAnswer: 1
             }
           },
           {
-            id: 'web-1-2',
-            title: 'CSS Styling',
-            description: 'Style your web pages with CSS',
-            duration: 15,
+            id: 'compliance',
+            title: 'Compliance-Anforderungen',
+            description: 'Rechtliche Anforderungen im Unternehmenskontext',
+            duration: 30,
             completed: false,
             content: `
-# CSS Styling Guide
+# Compliance bei ChatGPT
 
-## Basic Concepts
-- Selectors and specificity
-- Box model
-- Layout systems
+## Rechtliche Rahmenbedingungen
+- Unternehmensrichtlinien
+- Branchenspezifische Vorschriften
+- Dokumentationspflichten
 
-## Styling Techniques
-1. Colors and typography
-2. Flexbox and Grid
-3. Responsive design
+## Implementierung
+1. Richtlinien erstellen
+2. Mitarbeiter schulen
+3. Kontrollen einführen
 
-Master these fundamentals for beautiful web pages.
+Compliance sichert die rechtskonforme KI-Nutzung.
             `,
             quiz: {
-              question: "Which CSS layout system is best suited for two-dimensional layouts?",
+              question: "Was ist für die Compliance besonders wichtig?",
               options: [
-                "Flexbox",
-                "Float",
-                "Grid",
-                "Position"
+                "Schnelle Implementation",
+                "Kosteneinsparung",
+                "Dokumentation",
+                "Marketing"
               ],
               correctAnswer: 2
             }
-          },
-        ],
-      },
-    ],
-  },
+          }
+        ]
+      }
+    ]
+  }
 ];

@@ -83,7 +83,7 @@ export default function App() {
     }
 
     try {
-      await supabase
+      const { error } = await supabase
         .from('user_progress')
         .upsert({
           user_id: user.id,
@@ -91,7 +91,11 @@ export default function App() {
           module_id: moduleId,
           completed: true,
           completion_date: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,lesson_id,module_id'
         });
+
+      if (error) throw error;
 
       setCourses(prevCourses =>
         prevCourses.map(course => ({
@@ -130,11 +134,14 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <GraduationCap className="w-8 h-8 text-amber-600" />
-              <h1 className="text-2xl font-bold text-gray-800">MicroLearn</h1>
+              <img 
+                src="https://www.adlx.de/images/Logo_ADLX_schwarz-gelb.png" 
+                alt="ADLX Logo" 
+                className="h-8"
+              />
             </div>
             <div className="flex items-center space-x-4">
               {user && (
@@ -188,6 +195,7 @@ export default function App() {
             <CourseList
               courses={courses}
               onSelectCourse={setSelectedCourse}
+              isLoggedIn={!!user}
             />
           </>
         )}

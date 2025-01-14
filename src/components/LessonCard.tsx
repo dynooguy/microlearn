@@ -1,5 +1,5 @@
-import React from 'react';
-import { Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { Clock, Eye, CheckCircle } from 'lucide-react';
 import { Lesson } from '../types';
 
 interface LessonCardProps {
@@ -10,6 +10,17 @@ interface LessonCardProps {
 }
 
 export const LessonCard: React.FC<LessonCardProps> = ({ lesson, moduleId, onComplete, onView }) => {
+  const [isCompleted, setIsCompleted] = useState(lesson.completed);
+
+  const handleComplete = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isCompleted) {
+      setIsCompleted(true);
+      onComplete(lesson.id, moduleId);
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
       {lesson.image && (
@@ -21,7 +32,12 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, moduleId, onComp
       )}
       <div className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-800">{lesson.title}</h3>
+          <button
+            onClick={() => onView(lesson)}
+            className="text-lg font-semibold text-gray-800 hover:text-gray-600 transition-colors text-left"
+          >
+            {lesson.title}
+          </button>
           <div className="flex items-center text-gray-600">
             <Clock className="w-4 h-4 mr-1" />
             <span className="text-sm">{lesson.duration} Min.</span>
@@ -30,31 +46,25 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, moduleId, onComp
         <p className="text-gray-600 mb-4">{lesson.description}</p>
         <div className="flex justify-between items-center">
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onView(lesson);
-            }}
-            className="px-4 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+            onClick={() => onView(lesson)}
+            className="p-2 rounded-md bg-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition-colors"
+            title="Lektion ansehen"
           >
-            Lektion ansehen
+            <Eye className="w-5 h-5" />
           </button>
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onComplete(lesson.id, moduleId);
-            }}
-            className={`px-4 py-2 rounded-md transition-colors ${
-              lesson.completed
-                ? 'bg-green-100 text-green-700'
-                : 'bg-amber-600 text-white hover:bg-amber-700'
+            onClick={handleComplete}
+            className={`p-2 rounded-md transition-colors ${
+              isCompleted
+                ? 'bg-green-100 text-green-700 cursor-default'
+                : 'bg-gray-100 text-gray-400 hover:text-gray-600 hover:bg-gray-200'
             }`}
+            title={isCompleted ? 'Abgeschlossen' : 'Als erledigt markieren'}
           >
-            {lesson.completed ? 'Abgeschlossen' : 'Als erledigt markieren'}
+            <CheckCircle className="w-5 h-5" />
           </button>
         </div>
       </div>
     </div>
   );
-};
+}
