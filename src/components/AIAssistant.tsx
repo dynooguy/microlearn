@@ -21,6 +21,27 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    // Check if OpenAI is properly configured
+    if (!API_KEY) {
+      setError('Der KI-Assistent ist momentan nicht verfügbar. Bitte versuchen Sie es später erneut.');
+      return;
+    }
+
+    // Initialize OpenAI client
+    try {
+      const openai = new OpenAI({
+        apiKey: API_KEY,
+        dangerouslyAllowBrowser: true
+      });
+      setIsInitialized(true);
+    } catch (error) {
+      console.error('Error initializing OpenAI:', error);
+      setError('Der KI-Assistent konnte nicht initialisiert werden. Bitte versuchen Sie es später erneut.');
+    }
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
@@ -32,12 +53,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
-
-    if (!API_KEY) {
-      setError('Der KI-Assistent ist momentan nicht verfügbar. Bitte versuchen Sie es später erneut.');
-      return;
-    }
+    if (!input.trim() || isLoading || !isInitialized) return;
 
     const userMessage = input.trim();
     setInput('');
@@ -60,7 +76,12 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
         3. Erkläre komplexe Konzepte mit einfachen Worten
         4. Motiviere die Lernenden und unterstütze ihren Lernfortschritt
         
-        Antworte immer auf Deutsch und in einem freundlichen, ermutigenden Ton.`;
+        Wichtige Regeln:
+        1. Antworte immer auf Deutsch
+        2. Verwende einen freundlichen, ermutigenden Ton
+        3. Bei technischen Problemen oder wenn du eine Frage nicht beantworten kannst, 
+           sage "Entschuldigung, ich konnte deine Frage gerade nicht verarbeiten. Bitte versuche es später noch einmal."
+        4. Bleibe immer beim Thema des Kurses und der aktuellen Lektion`;
 
       const response = await openai.chat.completions.create({
         model: "gpt-4",
@@ -76,16 +97,23 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
       const assistantMessage = response.choices[0]?.message?.content;
       if (assistantMessage) {
         setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
+      } else {
+        throw new Error('No response from assistant');
       }
     } catch (error) {
       console.error('Error getting AI response:', error);
       setError('Entschuldigung, ich konnte deine Frage gerade nicht verarbeiten. Bitte versuche es später noch einmal.');
+      // Add error message to chat
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'Entschuldigung, ich konnte deine Frage gerade nicht verarbeiten. Bitte versuche es später noch einmal.'
+      }]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (!API_KEY) {
+  if (!isInitialized || error) {
     return (
       <div className="flex flex-col h-[600px] bg-white rounded-lg shadow-lg">
         <div className="p-4 bg-gray-50 border-b flex items-center space-x-2">
@@ -96,9 +124,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
           <div className="text-center">
             <AlertCircle className="w-12 h-12 text-amber-600 mx-auto mb-4" />
             <p className="text-gray-600">
-              Der KI-Assistent ist momentan nicht verfügbar.
-              <br />
-              Bitte versuchen Sie es später erneut.
+              {error || 'Der KI-Assistent wird initialisiert...'}
             </p>
           </div>
         </div>
@@ -114,10 +140,10 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {error && (
-          <div className="bg-red-50 text-red-700 p-3 rounded-lg flex items-center space-x-2">
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            <p>{error}</p>
+        {messages.length === 0 && (
+          <div className="text-center text-gray-500 mt-4">
+            <p>Stelle eine Frage zum Kursinhalt oder zur aktuellen Lektion.</p>
+            <p className="text-sm mt-2">Ich helfe dir gerne beim Lernen!</p>
           </div>
         )}
         {messages.map((message, index) => (
