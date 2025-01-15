@@ -8,6 +8,7 @@ interface CourseViewProps {
   onBack: () => void;
   onComplete: (lessonId: string, moduleId: string) => void;
   onViewLesson: (lesson: Lesson) => void;
+  isLoggedIn: boolean;
 }
 
 export const CourseView: React.FC<CourseViewProps> = ({
@@ -15,6 +16,7 @@ export const CourseView: React.FC<CourseViewProps> = ({
   onBack,
   onComplete,
   onViewLesson,
+  isLoggedIn
 }) => {
   const totalLessons = course.modules.reduce(
     (acc, module) => acc + module.lessons.length,
@@ -75,7 +77,8 @@ export const CourseView: React.FC<CourseViewProps> = ({
             key={module.id}
             module={module}
             onComplete={onComplete}
-            onViewLesson={(lesson) => onViewLesson(lesson)}
+            onViewLesson={onViewLesson}
+            isLoggedIn={isLoggedIn}
           />
         ))}
       </div>

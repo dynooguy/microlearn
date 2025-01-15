@@ -7,9 +7,15 @@ interface ModuleCardProps {
   module: Module;
   onComplete: (lessonId: string, moduleId: string) => void;
   onViewLesson: (lesson: Lesson) => void;
+  isLoggedIn: boolean;
 }
 
-export const ModuleCard: React.FC<ModuleCardProps> = ({ module, onComplete, onViewLesson }) => {
+export const ModuleCard: React.FC<ModuleCardProps> = ({ 
+  module, 
+  onComplete, 
+  onViewLesson,
+  isLoggedIn
+}) => {
   const progress = (module.lessons.filter(lesson => lesson.completed).length / module.lessons.length) * 100;
 
   return (
@@ -27,6 +33,7 @@ export const ModuleCard: React.FC<ModuleCardProps> = ({ module, onComplete, onVi
             moduleId={module.id}
             onComplete={onComplete}
             onView={onViewLesson}
+            isLoggedIn={isLoggedIn}
           />
         ))}
       </div>

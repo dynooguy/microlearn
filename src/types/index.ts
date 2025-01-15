@@ -13,6 +13,8 @@ export interface Lesson {
   content: string;
   image?: string;
   quiz: QuizQuestion;
+  access: 'free' | 'premium';
+  level: 'starter' | 'advanced' | 'professional';
 }
 
 export interface Module {
@@ -29,5 +31,4 @@ export interface Course {
   image: string;
   modules: Module[];
   level: 'starter' | 'advanced' | 'professional';
-  access: 'free' | 'paid';
 }

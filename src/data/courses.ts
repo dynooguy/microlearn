@@ -7,7 +7,6 @@ export const courses: Course[] = [
     description: 'Lernen Sie effektive Techniken für die Kommunikation mit ChatGPT und erstellen Sie bessere Prompts für optimale Ergebnisse.',
     image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800',
     level: 'starter',
-    access: 'free',
     modules: [
       {
         id: 'basics',
@@ -20,6 +19,8 @@ export const courses: Course[] = [
             description: 'Lernen Sie die Basics der Kommunikation mit ChatGPT',
             duration: 10,
             completed: false,
+            level: 'starter',
+            access: 'free',
             content: `
 # Einführung in Prompting
 
@@ -52,6 +53,8 @@ Prompting ist der Schlüssel zur erfolgreichen Nutzung von ChatGPT!
             description: 'Die wichtigsten Elemente erfolgreicher Prompts',
             duration: 15,
             completed: false,
+            level: 'advanced',
+            access: 'premium',
             content: `
 # Struktur eines guten Prompts
 
@@ -91,6 +94,8 @@ Die richtige Struktur ist entscheidend für erfolgreiche Prompts.
             description: 'Verketten Sie Prompts für komplexe Aufgaben',
             duration: 20,
             completed: false,
+            level: 'professional',
+            access: 'premium',
             content: `
 # Prompt Chaining
 
@@ -127,7 +132,6 @@ Nutzen Sie Prompt Chaining für anspruchsvolle Aufgaben.
     description: 'Verstehen Sie die rechtlichen Rahmenbedingungen und Datenschutzaspekte bei der Nutzung von ChatGPT in Deutschland.',
     image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800',
     level: 'advanced',
-    access: 'paid',
     modules: [
       {
         id: 'privacy',
@@ -140,6 +144,8 @@ Nutzen Sie Prompt Chaining für anspruchsvolle Aufgaben.
             description: 'DSGVO-Konformität bei der KI-Nutzung',
             duration: 25,
             completed: false,
+            level: 'advanced',
+            access: 'free',
             content: `
 # Datenschutz bei ChatGPT
 
@@ -172,6 +178,8 @@ Datenschutz ist bei der KI-Nutzung unverzichtbar.
             description: 'Rechtliche Anforderungen im Unternehmenskontext',
             duration: 30,
             completed: false,
+            level: 'professional',
+            access: 'premium',
             content: `
 # Compliance bei ChatGPT
 

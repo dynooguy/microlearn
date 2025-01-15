@@ -188,6 +188,7 @@ export default function App() {
             onBack={() => setSelectedCourse(null)}
             onComplete={handleLessonComplete}
             onViewLesson={setSelectedLesson}
+            isLoggedIn={!!user}
           />
         ) : (
           <>
