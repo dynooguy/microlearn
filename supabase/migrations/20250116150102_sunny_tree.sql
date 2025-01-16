@@ -1,20 +1,18 @@
 /*
-  # API Keys Table Setup
+  # Fix API Keys Table Setup
 
   1. Changes
-    - Drop and recreate api_keys table with proper schema
+    - Recreate api_keys table with proper schema
     - Add RLS policies
-    - Insert default OpenAI API key
-  
+    - Insert default OpenAI API key placeholder
+    
   2. Security
     - Enable RLS
     - Add policy for authenticated users to read keys
 */
 
--- Drop existing table and recreate with correct schema
-DROP TABLE IF EXISTS api_keys CASCADE;
-
-CREATE TABLE api_keys (
+-- Recreate api_keys table with proper schema
+CREATE TABLE IF NOT EXISTS api_keys (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   service text UNIQUE NOT NULL,
   key text NOT NULL,
@@ -25,8 +23,8 @@ CREATE TABLE api_keys (
 -- Enable RLS
 ALTER TABLE api_keys ENABLE ROW LEVEL SECURITY;
 
--- Safely create policy using DO block to avoid conflicts
-DO $$
+-- Create policy for reading keys
+DO $$ 
 BEGIN
   -- Drop existing policy if it exists
   DROP POLICY IF EXISTS "Authenticated users can read API keys" ON api_keys;
@@ -39,19 +37,14 @@ BEGIN
     USING (true);
 END $$;
 
--- Create function to update updated_at timestamp if it doesn't exist
-DO $$
+-- Create or replace function to update updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
 BEGIN
-  CREATE OR REPLACE FUNCTION update_updated_at_column()
-  RETURNS TRIGGER AS $$
-  BEGIN
-    NEW.updated_at = now();
-    RETURN NEW;
-  END;
-  $$ language 'plpgsql';
-EXCEPTION
-  WHEN duplicate_function THEN NULL;
-END $$;
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
 
 -- Create trigger for updating updated_at
 DROP TRIGGER IF EXISTS update_api_keys_updated_at ON api_keys;
@@ -60,8 +53,8 @@ CREATE TRIGGER update_api_keys_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
--- Insert OpenAI API key if it doesn't exist
+-- Insert or update OpenAI API key
 INSERT INTO api_keys (service, key)
-VALUES ('openai', 'sk-your-openai-api-key-here')
-ON CONFLICT (service) DO UPDATE 
-SET key = EXCLUDED.key;
+VALUES ('openai', 'sk-placeholder-key')
+ON CONFLICT (service) 
+DO UPDATE SET key = EXCLUDED.key;

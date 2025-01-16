@@ -21,12 +21,10 @@ export default function App() {
   const [showProfile, setShowProfile] = useState(false);
   const { user, signIn, signUp, signOut } = useAuth();
 
-  // Load courses when component mounts
   useEffect(() => {
     loadCourses();
   }, []);
 
-  // Load user progress whenever user changes or courses are loaded
   useEffect(() => {
     if (user && courses.length > 0) {
       loadUserProgress();
@@ -107,7 +105,6 @@ export default function App() {
 
       if (error) throw error;
 
-      // Update local state
       setCourses(prevCourses =>
         prevCourses.map(course => ({
           ...course,
@@ -225,6 +222,7 @@ export default function App() {
               m.lessons.some(l => l.id === selectedLesson.id)
             )?.id || ''}
             onComplete={handleLessonComplete}
+            onClose={() => setSelectedLesson(null)}
           />
         )}
       </Modal>
