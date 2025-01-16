@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, Loader2, AlertCircle } from 'lucide-react';
 import { Course, Lesson } from '../types';
 import OpenAI from 'openai';
+import { supabase } from '../lib/supabase';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -13,8 +14,6 @@ interface AIAssistantProps {
   currentLesson: Lesson | null;
 }
 
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
-
 export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -22,26 +21,43 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [openai, setOpenai] = useState<OpenAI | null>(null);
 
   useEffect(() => {
-    // Check if OpenAI is properly configured
-    if (!API_KEY) {
-      setError('Der KI-Assistent ist momentan nicht verfügbar. Bitte versuchen Sie es später erneut.');
-      return;
-    }
+    initializeOpenAI();
+  }, []);
 
-    // Initialize OpenAI client
+  const initializeOpenAI = async () => {
     try {
-      const openai = new OpenAI({
-        apiKey: API_KEY,
+      // Fetch OpenAI API key from Supabase
+      const { data, error } = await supabase
+        .from('api_keys')
+        .select('key')
+        .eq('service', 'openai')
+        .single();
+
+      if (error) {
+        console.error('Error fetching OpenAI API key:', error);
+        throw new Error('Could not fetch OpenAI API key');
+      }
+
+      if (!data?.key) {
+        throw new Error('OpenAI API key not found');
+      }
+
+      // Initialize OpenAI client
+      const openaiInstance = new OpenAI({
+        apiKey: data.key,
         dangerouslyAllowBrowser: true
       });
+
+      setOpenai(openaiInstance);
       setIsInitialized(true);
     } catch (error) {
       console.error('Error initializing OpenAI:', error);
       setError('Der KI-Assistent konnte nicht initialisiert werden. Bitte versuchen Sie es später erneut.');
     }
-  }, []);
+  };
 
   useEffect(() => {
     scrollToBottom();
@@ -53,7 +69,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading || !isInitialized) return;
+    if (!input.trim() || isLoading || !isInitialized || !openai) return;
 
     const userMessage = input.trim();
     setInput('');
@@ -62,11 +78,6 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
     setError(null);
 
     try {
-      const openai = new OpenAI({
-        apiKey: API_KEY,
-        dangerouslyAllowBrowser: true
-      });
-
       const systemPrompt = `Du bist ein hilfreicher Lernassistent für den Kurs "${course.title}". 
         ${currentLesson ? `Aktuelle Lektion: "${currentLesson.title}"` : ''}
         
@@ -103,7 +114,6 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
     } catch (error) {
       console.error('Error getting AI response:', error);
       setError('Entschuldigung, ich konnte deine Frage gerade nicht verarbeiten. Bitte versuche es später noch einmal.');
-      // Add error message to chat
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: 'Entschuldigung, ich konnte deine Frage gerade nicht verarbeiten. Bitte versuche es später noch einmal.'

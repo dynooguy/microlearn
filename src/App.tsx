@@ -21,12 +21,14 @@ export default function App() {
   const [showProfile, setShowProfile] = useState(false);
   const { user, signIn, signUp, signOut } = useAuth();
 
+  // Load courses when component mounts
   useEffect(() => {
     loadCourses();
   }, []);
 
+  // Load user progress whenever user changes or courses are loaded
   useEffect(() => {
-    if (user) {
+    if (user && courses.length > 0) {
       loadUserProgress();
     }
   }, [user, courses]);
@@ -47,10 +49,17 @@ export default function App() {
     if (!user) return;
 
     try {
-      const { data: progress } = await supabase
+      console.log('Loading user progress for user:', user.id);
+      const { data: progress, error: progressError } = await supabase
         .from('user_progress')
-        .select('lesson_id, module_id, completed, completion_date')
+        .select('*')
         .eq('user_id', user.id);
+
+      if (progressError) {
+        throw progressError;
+      }
+
+      console.log('Received progress data:', progress);
 
       if (progress) {
         setCourses(prevCourses =>
@@ -73,6 +82,7 @@ export default function App() {
       }
     } catch (err) {
       console.error('Error loading user progress:', err);
+      setError('Fehler beim Laden des Lernfortschritts.');
     }
   };
 
@@ -97,6 +107,7 @@ export default function App() {
 
       if (error) throw error;
 
+      // Update local state
       setCourses(prevCourses =>
         prevCourses.map(course => ({
           ...course,
@@ -112,6 +123,7 @@ export default function App() {
       );
     } catch (err) {
       console.error('Error saving progress:', err);
+      setError('Fehler beim Speichern des Fortschritts.');
     }
   };
 
