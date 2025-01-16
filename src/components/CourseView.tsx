@@ -60,7 +60,7 @@ export const CourseView: React.FC<CourseViewProps> = ({
           <div className="w-full bg-gray-100 rounded-full h-4">
             <div
               className="h-4 rounded-full transition-all duration-300 relative"
-              style={{ width: `${progress}%`, backgroundColor: '#666666' }}
+              style={{ width: `${progress}%`, backgroundColor: '#157535' }}
             >
               <div className="absolute inset-0 rounded-full animate-pulse" style={{ backgroundColor: 'rgba(102, 102, 102, 0.3)' }}></div>
             </div>

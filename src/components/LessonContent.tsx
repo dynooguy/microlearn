@@ -139,7 +139,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson, moduleId, 
       <div className={`relative transition-transform duration-700 transform-style-preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
         {/* Front side - Lesson Content */}
         <div className={`absolute w-full backface-hidden ${isFlipped ? 'invisible' : ''}`}>
-          <div className="bg-amber-400 shadow-sm">
+          <div className="bg-yellow-300 shadow-sm">
             <div className="max-w-screen-xl mx-auto px-4 py-3">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-800 truncate pr-4">
@@ -213,7 +213,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson, moduleId, 
 
         {/* Back side - AI Assistant */}
         <div className={`absolute w-full backface-hidden rotate-y-180 ${!isFlipped ? 'invisible' : ''}`}>
-          <div className="bg-amber-400 shadow-sm">
+          <div className="bg-yellow-300 shadow-sm">
             <div className="max-w-screen-xl mx-auto px-4 py-3">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-800">
@@ -230,7 +230,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ lesson, moduleId, 
                   <div className="w-px h-6 bg-amber-500/30" />
                   <button
                     onClick={onClose}
-                    className="p-2 rounded-full hover:bg-amber-300 text-green-600 transition-colors"
+                    className="p-2 rounded-full hover:bg-amber-300 text-red-600 transition-colors"
                     title="Schließen"
                   >
                     <X className="w-5 h-5" />

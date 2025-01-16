@@ -20,14 +20,14 @@ export const CourseProgress: React.FC<CourseProgressProps> = ({ course }) => {
 
   return (
     <div className="mt-4">
-      <div className="flex justify-between text-sm text-gray-600 mb-1">
+      <div className="flex justify-between text-sm text-grey-600 mb-1">
         <span>{completedLessons} von {totalLessons} Lektionen abgeschlossen</span>
         <span>{Math.round(progress)}%</span>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-2">
+      <div className="w-full bg-grey-200 rounded-full h-2">
         <div
           className="h-2 rounded-full transition-all duration-300"
-          style={{ width: `${progress}%`, backgroundColor: '#666666' }}
+          style={{ width: `${progress}%`, backgroundColor: '#157535' }}
         />
       </div>
     </div>

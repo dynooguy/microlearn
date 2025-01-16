@@ -145,7 +145,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
   return (
     <div className="flex flex-col h-[600px] bg-white rounded-lg shadow-lg">
       <div className="p-4 bg-gray-50 border-b flex items-center space-x-2">
-        <Bot className="w-5 h-5 text-amber-600" />
+        <Bot className="w-5 h-5 text-yellow-400" />
         <h3 className="font-semibold text-gray-800">KI-Lernassistent</h3>
       </div>
 
@@ -164,7 +164,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
             <div
               className={`max-w-[80%] rounded-lg p-3 ${
                 message.role === 'user'
-                  ? 'bg-amber-100 text-gray-800'
+                  ? 'bg-yellow-100 text-gray-800'
                   : 'bg-gray-100 text-gray-800'
               }`}
             >
@@ -175,7 +175,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
         {isLoading && (
           <div className="flex justify-start">
             <div className="bg-gray-100 rounded-lg p-3">
-              <Loader2 className="w-5 h-5 animate-spin text-amber-600" />
+              <Loader2 className="w-5 h-5 animate-spin text-yellow-400" />
             </div>
           </div>
         )}
@@ -195,7 +195,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ course, currentLesson 
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors disabled:opacity-80 disabled:cursor-not-allowed"
           >
             <Send className="w-5 h-5" />
           </button>
