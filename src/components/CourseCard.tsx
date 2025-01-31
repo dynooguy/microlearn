@@ -1,94 +1,62 @@
 import React from 'react';
-import { Course } from '../types';
-import { CourseProgress } from './CourseProgress';
-import { Clock, BookOpen } from 'lucide-react';
+import { Award, Clock } from 'lucide-react';
+import type { Course } from '../types/seatable';
 
 interface CourseCardProps {
   course: Course;
-  onClick: (course: Course) => void;
-  isLoggedIn: boolean;
 }
 
-export const CourseCard: React.FC<CourseCardProps> = ({ course, onClick, isLoggedIn }) => {
-  const totalLessons = course.modules.reduce(
-    (acc, module) => acc + module.lessons.length,
+export function CourseCard({ course }: CourseCardProps) {
+  const totalLessons = course.Kapitel.reduce(
+    (sum, chapter) => sum + chapter.Lektionen.length,
     0
   );
   
-  const totalDuration = course.modules.reduce(
-    (acc, module) => acc + module.lessons.reduce((sum, lesson) => sum + lesson.duration, 0),
+  const totalDuration = course.Kapitel.reduce(
+    (sum, chapter) => 
+      sum + chapter.Lektionen.reduce(
+        (chapterSum, lesson) => chapterSum + lesson.DauerInMin,
+        0
+      ),
     0
   );
 
-  const LevelBars = ({ level }: { level: Course['level'] }) => {
-    return (
-      <div className="flex items-end gap-0.5 h-4">
-        <div
-          className={`w-1 h-2 rounded-sm transition-all ${
-            level === 'starter' || level === 'advanced' || level === 'professional'
-              ? 'bg-white'
-              : 'bg-white/30'
-          }`}
-        />
-        <div
-          className={`w-1 h-3 rounded-sm transition-all ${
-            level === 'advanced' || level === 'professional'
-              ? 'bg-white'
-              : 'bg-white/30'
-          }`}
-        />
-        <div
-          className={`w-1 h-4 rounded-sm transition-all ${
-            level === 'professional'
-              ? 'bg-white'
-              : 'bg-white/30'
-          }`}
-        />
-      </div>
-    );
-  };
-
   return (
-    <div
-      onClick={() => onClick(course)}
-      className="bg-white rounded-xl shadow-md overflow-hidden group cursor-pointer hover:shadow-xl transition-all duration-300 flex flex-col h-full"
-    >
-      <div className="relative">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="aspect-video relative">
         <img
-          src={course.image}
-          alt={course.title}
-          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+          src={course.Kursbild}
+          alt={course.Name}
+          className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        
-        {/* Level Badge */}
         <div className="absolute bottom-4 left-4">
-          <span className="h-6 px-2 rounded-full flex items-center bg-gray-700/80">
-            <LevelBars level={course.level} />
+          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+            course.Level === 'Starter'
+              ? 'bg-green-100 text-green-800'
+              : course.Level === 'Fortgeschritten'
+              ? 'bg-blue-100 text-blue-800'
+              : 'bg-purple-100 text-purple-800'
+          }`}>
+            <Award className="w-4 h-4 mr-1" />
+            {course.Level}
           </span>
         </div>
       </div>
-
-      <div className="p-6 flex flex-col flex-grow">
-        <div className="flex-grow">
-          <h3 className="text-xl font-bold text-gray-800 mb-3">{course.title}</h3>
-          <p className="text-gray-600">{course.description}</p>
-        </div>
+      
+      <div className="p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-2">{course.Name}</h2>
+        <p className="text-gray-600 mb-4 line-clamp-2">{course.Kurzbeschreibung}</p>
         
-        <div className="mt-6 pt-4 border-t border-gray-100">
-          <div className="flex items-center space-x-4 text-sm text-gray-500 mb-4">
-            <div className="flex items-center">
-              <BookOpen className="w-4 h-4 mr-1" />
-              <span>{totalLessons} Lektionen</span>
-            </div>
-            <div className="flex items-center">
-              <Clock className="w-4 h-4 mr-1" />
-              <span>{totalDuration} Min.</span>
-            </div>
+        <div className="flex items-center justify-between text-sm text-gray-500">
+          <div className="flex items-center">
+            <Clock className="w-4 h-4 mr-1" />
+            {totalDuration} min
           </div>
-          <CourseProgress course={course} />
+          <div>
+            {course.Kapitel.length} chapters • {totalLessons} lessons
+          </div>
         </div>
       </div>
     </div>
   );
-};
+}
