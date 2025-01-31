@@ -78,13 +78,6 @@ export async function fetchCourseData() {
       lessonTable.rows.map(lesson => [lesson._id, lesson as Lesson])
     );
 
-    // Debug: Log lesson levels
-    console.log('Lesson levels:', lessonTable.rows.map(lesson => ({
-      id: lesson._id,
-      name: lesson['920y'],
-      level: lesson['2lEO']
-    })));
-
     const chapterMap = new Map(
       chapterTable.rows.map(chapter => {
         const fullChapter = chapter as Chapter;
@@ -119,9 +112,6 @@ export async function fetchCourseData() {
       return fullCourse;
     });
 
-    // Return structured data
-    console.log('Processed courses:', courses);
-    
     return {
       ...data,
       tables: [
