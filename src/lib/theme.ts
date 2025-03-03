@@ -11,6 +11,11 @@ export interface ThemeConfig {
   branding: {
     logo: string;
     title: string;
+    footerLinks: {
+      privacy?: string;
+      terms?: string;
+      imprint?: string;
+    };
   };
 }
 
@@ -24,7 +29,8 @@ const defaultTheme: ThemeConfig = {
   },
   branding: {
     logo: 'BookOpen',
-    title: 'Lernplattform by ADLX'
+    title: 'Lernplattform by ADLX',
+    footerLinks: {}
   }
 };
 

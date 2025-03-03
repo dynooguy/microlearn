@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from './lib/supabase';
 import { Header } from './components/layout/Header';
+import { Footer } from './components/layout/Footer';
 import { AuthForm } from './components/auth/AuthForm';
 import { CourseList } from './components/courses/CourseList';
 import { CourseDetails } from './components/courses/CourseDetails';
@@ -42,16 +43,19 @@ function App() {
       <div className="min-h-screen bg-gray-50">
         {session ? (
           <>
-            <Header />
-            <main className="w-full max-w-7xl mx-auto py-4 px-4 sm:py-6 sm:px-6 lg:px-8">
-              <Routes>
-                <Route path="/" element={<Navigate to="/courses" replace />} />
-                <Route path="/courses" element={<CourseList />} />
-                <Route path="/courses/:courseId" element={<CourseDetails />} />
-                <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonView />} />
-                <Route path="/profile" element={<Profile />} />
-              </Routes>
-            </main>
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-grow w-full max-w-7xl mx-auto py-4 px-4 sm:py-6 sm:px-6 lg:px-8">
+                <Routes>
+                  <Route path="/" element={<Navigate to="/courses" replace />} />
+                  <Route path="/courses" element={<CourseList />} />
+                  <Route path="/courses/:courseId" element={<CourseDetails />} />
+                  <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonView />} />
+                  <Route path="/profile" element={<Profile />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
           </>
         ) : (
           <div className="min-h-screen flex items-center justify-center px-4">

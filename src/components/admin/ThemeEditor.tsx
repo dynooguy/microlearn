@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAtom } from 'jotai';
-import { BookOpen, Palette, Type, Image } from 'lucide-react';
+import { BookOpen, Palette, Type, Image, Link as LinkIcon } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { themeAtom, type ThemeConfig, getThemeClass } from '../../lib/theme';
 
@@ -135,6 +135,79 @@ export function ThemeEditor() {
                 shadow-sm focus:border-${tempTheme.colors.primary}-500 
                 focus:ring-${tempTheme.colors.primary}-500 sm:text-sm`}
             />
+          </div>
+        </div>
+
+        {/* Footer Links */}
+        <div>
+          <label className="text-sm font-medium flex items-center">
+            <LinkIcon className="w-4 h-4 mr-2" />
+            Footer Links
+          </label>
+          <div className="space-y-4 mt-2">
+            <div>
+              <label className="text-sm text-gray-600">Datenschutz URL</label>
+              <input
+                type="url"
+                value={tempTheme.branding.footerLinks.privacy || ''}
+                onChange={e => setTempTheme(prev => ({
+                  ...prev,
+                  branding: {
+                    ...prev.branding,
+                    footerLinks: {
+                      ...prev.branding.footerLinks,
+                      privacy: e.target.value
+                    }
+                  }
+                }))}
+                className={`mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 
+                  shadow-sm focus:border-${tempTheme.colors.primary}-500 
+                  focus:ring-${tempTheme.colors.primary}-500 sm:text-sm`}
+                placeholder="https://example.com/privacy"
+              />
+            </div>
+            <div>
+              <label className="text-sm text-gray-600">AGB URL</label>
+              <input
+                type="url"
+                value={tempTheme.branding.footerLinks.terms || ''}
+                onChange={e => setTempTheme(prev => ({
+                  ...prev,
+                  branding: {
+                    ...prev.branding,
+                    footerLinks: {
+                      ...prev.branding.footerLinks,
+                      terms: e.target.value
+                    }
+                  }
+                }))}
+                className={`mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 
+                  shadow-sm focus:border-${tempTheme.colors.primary}-500 
+                  focus:ring-${tempTheme.colors.primary}-500 sm:text-sm`}
+                placeholder="https://example.com/terms"
+              />
+            </div>
+            <div>
+              <label className="text-sm text-gray-600">Impressum URL</label>
+              <input
+                type="url"
+                value={tempTheme.branding.footerLinks.imprint || ''}
+                onChange={e => setTempTheme(prev => ({
+                  ...prev,
+                  branding: {
+                    ...prev.branding,
+                    footerLinks: {
+                      ...prev.branding.footerLinks,
+                      imprint: e.target.value
+                    }
+                  }
+                }))}
+                className={`mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 
+                  shadow-sm focus:border-${tempTheme.colors.primary}-500 
+                  focus:ring-${tempTheme.colors.primary}-500 sm:text-sm`}
+                placeholder="https://example.com/imprint"
+              />
+            </div>
           </div>
         </div>
       </div>
