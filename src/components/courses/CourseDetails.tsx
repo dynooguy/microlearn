@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Award, Clock, Lock, Image, BookOpen, ChevronLeft } from 'lucide-react';
+import { Award, Clock, Lock, Image, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { fetchCourseData } from '../../services/seatable';
 import { getLessonProgress, startCourse } from '../../services/progress';
 import { useAtom } from 'jotai';
@@ -25,9 +25,14 @@ export function CourseDetails() {
           const foundCourse = courseTable.rows.find(c => c['0000'] === courseId) as Course;
           if (foundCourse) {
             setCourse(foundCourse);
-            await startCourse(courseId);
-            const lessonProgress = await getLessonProgress(courseId);
-            setProgress(lessonProgress);
+            try {
+              await startCourse(courseId);
+              const lessonProgress = await getLessonProgress(courseId);
+              setProgress(lessonProgress);
+            } catch (err) {
+              console.error('Error tracking course progress:', err);
+              // Don't throw here - we still want to show the course even if progress tracking fails
+            }
           } else {
             throw new Error('Course not found');
           }
@@ -174,12 +179,27 @@ export function CourseDetails() {
                           <span className="text-sm text-gray-500">
                             {chapter['0Gbu']}.{lesson.yt6Q}
                           </span>
-                          <h3 className="text-base font-medium text-gray-900 truncate">
+                          <h3 className="text-base font-medium text-gray-900 truncate mb-1 flex items-center gap-2">
                             {lesson['920y']}
+                            {isCompleted && (
+                              <span className="text-emerald-500 flex-shrink-0">
+                                <CheckCircle2 className="w-4 h-4" />
+                              </span>
+                            )}
                           </h3>
                         </div>
 
                         <div className="flex items-center gap-3 text-sm">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                            lesson['2lEO'] === '789462'
+                              ? 'bg-green-100 text-green-800'
+                              : lesson['2lEO'] === '394309'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-purple-100 text-purple-800'
+                          }`}>
+                            <Award className="w-3 h-3 mr-1" />
+                            {lesson['2lEO'] === '789462' ? 'Starter' : lesson['2lEO'] === '394309' ? 'Fortgeschritten' : 'Experte'}
+                          </span>
                           <span className="flex items-center text-gray-500">
                             <Clock className="w-4 h-4 mr-1" />
                             {lesson.azCf} min
@@ -189,13 +209,6 @@ export function CourseDetails() {
                             <span className="inline-flex items-center text-yellow-600">
                               <Lock className="w-4 h-4 mr-1" />
                               Premium
-                            </span>
-                          )}
-
-                          {isCompleted && (
-                            <span className={`inline-flex items-center ${getThemeClass(theme.colors.primary, 'text')}`}>
-                              <BookOpen className="w-4 h-4 mr-1" />
-                              Abgeschlossen
                             </span>
                           )}
                         </div>

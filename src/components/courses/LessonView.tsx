@@ -210,7 +210,7 @@ export function LessonView() {
         <div className="bg-white rounded-lg shadow-sm p-8">
           <div className={`prose prose-lg max-w-none prose-headings:${getThemeClass(theme.colors.primary, 'text')} prose-a:${getThemeClass(theme.colors.primary, 'text')}`}>
             <div
-              dangerouslySetInnerHTML={{ __html: formatMarkdown(lesson.y1X4.text) }}
+              dangerouslySetInnerHTML={{ __html: formatMarkdown(lesson.y1X4.text, true) }}
             />
           </div>
         </div>
