@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { supabase } from './lib/supabase';
+import { themeAtom, loadThemeSettings } from './lib/theme';
+import { useAtom } from 'jotai';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 import { AuthForm } from './components/auth/AuthForm';
@@ -13,11 +15,27 @@ import { LearningPath } from './components/LearningPath';
 function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useAtom(themeAtom);
+
+  const initializeTheme = useCallback(async () => {
+    try {
+      const settings = await loadThemeSettings();
+      setTheme(prev => ({
+        ...prev,
+        ...settings
+      }));
+    } catch (err) {
+      console.error('Error loading theme settings:', err);
+    }
+  }, [setTheme]);
 
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (session) {
+        initializeTheme();
+      }
       setLoading(false);
     });
 
@@ -26,10 +44,13 @@ function App() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      if (session) {
+        initializeTheme();
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [initializeTheme]);
 
   if (loading) {
     return (

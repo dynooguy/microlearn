@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import { supabase } from './supabase';
 
 export interface ThemeConfig {
   colors: {
@@ -34,6 +35,48 @@ const defaultTheme: ThemeConfig = {
   }
 };
 
+export async function loadThemeSettings(): Promise<Partial<ThemeConfig>> {
+  const { data, error } = await supabase
+    .from('theme_settings')
+    .select('footer_links')
+    .order('updated_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error('Error loading theme settings:', error);
+    return {
+      branding: {
+        ...defaultTheme.branding,
+        footerLinks: {}
+      }
+    };
+  }
+
+  return {
+    branding: {
+      ...defaultTheme.branding,
+      footerLinks: data?.footer_links || {}
+    }
+  };
+}
+
+export async function saveThemeSettings(theme: ThemeConfig): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { error } = await supabase
+    .from('theme_settings')
+    .insert({
+      footer_links: theme.branding.footerLinks,
+      created_by: user.id
+    });
+
+  if (error) {
+    console.error('Error saving theme settings:', error);
+    throw error;
+  }
+}
 export const themeAtom = atom<ThemeConfig>(defaultTheme);
 
 // Tailwind class generator functions

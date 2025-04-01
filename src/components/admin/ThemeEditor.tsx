@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { BookOpen, Palette, Type, Image, Link as LinkIcon, Key } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { AccessCodeManager } from './AccessCodeManager';
-import { themeAtom, type ThemeConfig, getThemeClass } from '../../lib/theme';
+import { themeAtom, type ThemeConfig, getThemeClass, saveThemeSettings } from '../../lib/theme';
 
 const colorOptions = ['indigo', 'blue', 'green', 'red', 'purple', 'pink', 'orange', 'gray', 'yellow', 'sky', 'lime', 'cyan', 'fuchsia', 'slate'];
 const logoOptions = ['BookOpen', 'GraduationCap', 'Book', 'Library', 'School'];
@@ -12,6 +12,8 @@ export function ThemeEditor() {
   const [theme, setTheme] = useAtom(themeAtom);
   const [isEditing, setIsEditing] = useState(false);
   const [tempTheme, setTempTheme] = useState<ThemeConfig>(theme);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleColorChange = (colorType: keyof ThemeConfig['colors'], color: string) => {
     setTempTheme(prev => ({
@@ -23,10 +25,18 @@ export function ThemeEditor() {
     }));
   };
 
-  const handleSave = () => {
-    setTheme(tempTheme);
-    setIsEditing(false);
-    // TODO: Save to Supabase when backend is ready
+  const handleSave = async () => {
+    setSaving(true);
+    setError(null);
+    try {
+      await saveThemeSettings(tempTheme);
+      setTheme(tempTheme);
+      setIsEditing(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save settings');
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (!isEditing) {
@@ -51,6 +61,7 @@ export function ThemeEditor() {
           <Button
             variant="outline"
             size="sm"
+            disabled={saving}
             onClick={() => {
               setTempTheme(theme);
               setIsEditing(false);
@@ -58,11 +69,17 @@ export function ThemeEditor() {
           >
             Abbrechen
           </Button>
-          <Button size="sm" onClick={handleSave}>
-            Speichern
+          <Button size="sm" onClick={handleSave} disabled={saving}>
+            {saving ? 'Wird gespeichert...' : 'Speichern'}
           </Button>
         </div>
       </div>
+
+      {error && (
+        <div className="bg-red-50 text-red-600 p-4 rounded-lg mb-4">
+          {error}
+        </div>
+      )}
 
       {/* Colors */}
       <div className="space-y-4">

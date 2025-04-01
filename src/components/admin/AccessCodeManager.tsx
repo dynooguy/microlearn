@@ -92,30 +92,22 @@ export function AccessCodeManager() {
 
   async function handleDeleteCode(id: string) {
     try {
-      // First check if user is admin
-      const { data: roleData } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
-        .single();
-
-      if (!roleData || roleData.role !== 'admin') {
-        throw new Error('Unauthorized: Only admins can delete access codes');
-      }
-
       const { error } = await supabase
         .from('access_codes')
         .delete()
         .eq('id', id);
 
       if (error) {
-        console.error('Delete error:', error);
-        throw error;
+        if (error.code === 'PGRST301') {
+          throw new Error('Dieser Code wird bereits von Lernpfaden verwendet und kann nicht gelöscht werden.');
+        } else {
+          throw error;
+        }
       }
 
       loadAccessCodes();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete access code');
+      setError(err instanceof Error ? err.message : 'Fehler beim Löschen des Codes');
     }
   }
 
