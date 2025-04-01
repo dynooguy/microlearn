@@ -38,6 +38,11 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
+                  <Link to="/learning-path" className="text-sm text-gray-500 hover:text-gray-900">
+                    Lernpfade
+                  </Link>
+                </li>
+                <li>
                   <Link to="/profile" className="text-sm text-gray-500 hover:text-gray-900">
                     Profil
                   </Link>

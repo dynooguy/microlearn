@@ -25,9 +25,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
         'disabled:pointer-events-none disabled:opacity-50',
         variants[variant],
         {
-          'sm': 'h-8 px-3 text-sm',
+          'sm': 'h-8 px-3 text-sm sm:h-8 sm:px-3',
           'md': 'h-10 px-4',
-          'lg': 'h-12 px-6 text-lg'
+          'lg': 'h-12 px-6 text-lg',
+          'mobile': 'h-6 px-1.5 sm:h-8 sm:px-3'
         }[size],
         className
       )}
@@ -39,4 +40,5 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({
 
 Button.displayName = 'Button';
 
-export { Button, type ButtonProps };
+
+export { Button }
