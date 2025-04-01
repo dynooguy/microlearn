@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useAtom } from 'jotai';
-import { BookOpen, Palette, Type, Image, Link as LinkIcon } from 'lucide-react';
+import { BookOpen, Palette, Type, Image, Link as LinkIcon, Key } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { AccessCodeManager } from './AccessCodeManager';
 import { themeAtom, type ThemeConfig, getThemeClass } from '../../lib/theme';
 
 const colorOptions = ['indigo', 'blue', 'green', 'red', 'purple', 'pink', 'orange', 'gray', 'yellow', 'sky', 'lime', 'cyan', 'fuchsia', 'slate'];
@@ -30,10 +31,15 @@ export function ThemeEditor() {
 
   if (!isEditing) {
     return (
-      <Button onClick={() => setIsEditing(true)} className="w-full">
-        <Palette className="w-4 h-4 mr-2" />
-        Design anpassen
-      </Button>
+      <div className="space-y-4">
+        <Button onClick={() => setIsEditing(true)} className="w-full">
+          <Palette className="w-4 h-4 mr-2" />
+          Design anpassen
+        </Button>
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <AccessCodeManager />
+        </div>
+      </div>
     );
   }
 

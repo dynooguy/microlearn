@@ -8,6 +8,7 @@ import { CourseList } from './components/courses/CourseList';
 import { CourseDetails } from './components/courses/CourseDetails';
 import { LessonView } from './components/courses/LessonView';
 import { Profile } from './components/profile/Profile';
+import { LearningPath } from './components/LearningPath';
 
 function App() {
   const [session, setSession] = useState(null);
@@ -52,6 +53,7 @@ function App() {
                   <Route path="/courses/:courseId" element={<CourseDetails />} />
                   <Route path="/courses/:courseId/lessons/:lessonId" element={<LessonView />} />
                   <Route path="/profile" element={<Profile />} />
+                  <Route path="/learning-path" element={<LearningPath />} />
                 </Routes>
               </main>
               <Footer />

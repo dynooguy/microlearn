@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Check, ChevronLeft } from 'lucide-react';
 import { formatMarkdown } from '../../lib/markdown';
 import { fetchCourseData } from '../../services/seatable';
 import { Button } from '../ui/Button';
 import { completeLesson, getLessonProgress } from '../../services/progress';
+import { getLearningPaths } from '../../services/learningPaths';
 import { useAtom } from 'jotai';
 import { themeAtom, getThemeClass } from '../../lib/theme';
 import type { Course, Lesson } from '../../types/seatable';
@@ -13,18 +14,31 @@ import type { LessonProgress } from '../../services/progress';
 export function LessonView() {
   const [theme] = useAtom(themeAtom);
   const { courseId, lessonId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
   const [currentChapterIndex, setCurrentChapterIndex] = useState(-1);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(-1);
+  const [learningPathLessons, setLearningPathLessons] = useState<{ id: string; courseId: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [progress, setProgress] = useState<LessonProgress[]>([]);
   const [completing, setCompleting] = useState(false);
+  const isFromLearningPath = location.state?.fromLearningPath;
 
   // Find adjacent lessons for navigation
   const findAdjacentLessons = () => {
+    if (isFromLearningPath && learningPathLessons.length > 0) {
+      const currentIndex = learningPathLessons.findIndex(l => l.id === lessonId);
+      if (currentIndex === -1) return { prev: null, next: null };
+
+      return {
+        prev: currentIndex > 0 ? learningPathLessons[currentIndex - 1] : null,
+        next: currentIndex < learningPathLessons.length - 1 ? learningPathLessons[currentIndex + 1] : null
+      };
+    }
+
     if (!course || currentChapterIndex === -1 || currentLessonIndex === -1) {
       return { prev: null, next: null };
     }
@@ -54,6 +68,33 @@ export function LessonView() {
   useEffect(() => {
     async function loadLesson() {
       try {
+        // If coming from learning path, load the path's lessons
+        if (isFromLearningPath) {
+          const paths = await getLearningPaths();
+          const currentPath = paths.find(path => path.lesson_ids.includes(lessonId!));
+          
+          if (currentPath) {
+            const data = await fetchCourseData();
+            const courseTable = data.tables.find(t => t.name === 'Kurse');
+            if (courseTable) {
+              const pathLessons: { id: string; courseId: string }[] = [];
+              (courseTable.rows as Course[]).forEach(course => {
+                course.Kapitel.forEach(chapter => {
+                  chapter.Lektionen.forEach(lesson => {
+                    if (currentPath.lesson_ids.includes(lesson['0000'])) {
+                      pathLessons.push({
+                        id: lesson['0000'],
+                        courseId: course['0000']
+                      });
+                    }
+                  });
+                });
+              });
+              setLearningPathLessons(pathLessons);
+            }
+          }
+        }
+
         const data = await fetchCourseData();
         const courseTable = data.tables.find(t => t.name === 'Kurse');
         if (courseTable) {
@@ -134,18 +175,31 @@ export function LessonView() {
       <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
         <div className="max-w-7xl mx-auto px-4">
           <div className="h-16 flex items-center justify-between gap-4">
-            <Link
-              to={`/courses/${courseId}`}
-              className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
-            >
-              <ChevronLeft className="w-5 h-5 mr-1" />
-              Zurück zum Kurs
-            </Link>
+            {isFromLearningPath ? (
+              <Link
+                to="/learning-path"
+                className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+              >
+                <ChevronLeft className="w-5 h-5 mr-1" />
+                Zurück zum Lernpfad
+              </Link>
+            ) : (
+              <Link
+                to={`/courses/${courseId}`}
+                className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+              >
+                <ChevronLeft className="w-5 h-5 mr-1" />
+                Zurück zum Kurs
+              </Link>
+            )}
 
             <div className="flex items-center gap-2">
               {prev && (
                 <Button
-                  onClick={() => navigate(`/courses/${courseId}/lessons/${prev['0000']}`)}
+                  onClick={() => navigate(
+                    `/courses/${isFromLearningPath ? prev.courseId : courseId}/lessons/${isFromLearningPath ? prev.id : prev['0000']}`,
+                    { state: { fromLearningPath: isFromLearningPath } }
+                  )}
                   variant="outline"
                   size="sm"
                 >
@@ -166,7 +220,10 @@ export function LessonView() {
 
               {next && (
                 <Button
-                  onClick={() => navigate(`/courses/${courseId}/lessons/${next['0000']}`)}
+                  onClick={() => navigate(
+                    `/courses/${isFromLearningPath ? next.courseId : courseId}/lessons/${isFromLearningPath ? next.id : next['0000']}`,
+                    { state: { fromLearningPath: isFromLearningPath } }
+                  )}
                   variant="default"
                   size="sm"
                 >

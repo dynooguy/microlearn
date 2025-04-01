@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BookOpen, User } from 'lucide-react';
+import { BookOpen, User, Map } from 'lucide-react';
 import { useAtom } from 'jotai';
 import { Button } from '../ui/Button';
 import { supabase } from '../../lib/supabase';
@@ -7,6 +7,7 @@ import { themeAtom, getThemeClass } from '../../lib/theme';
 
 export function Header() {
   const [theme] = useAtom(themeAtom);
+  
   const handleSignOut = async () => {
     await supabase.auth.signOut();
   };
@@ -25,6 +26,12 @@ export function Header() {
           <nav className="flex items-center gap-2 sm:gap-4">
             <Link to="/courses">
               <Button variant="ghost">Kurse</Button>
+            </Link>
+            <Link to="/learning-path">
+              <Button variant="ghost">
+                <Map className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Lernpfade</span>
+              </Button>
             </Link>
             <Link to="/profile">
               <Button variant="outline">
